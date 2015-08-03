@@ -7,16 +7,17 @@
 
 Algebraic data types are boring, and this talk would boring,
 except that algebraic data types are also very practical.
-They are everywhere in the languages that have them,
-and bloated, error-prone code is everywhere in the languages
-that don't have them.
+They are everywhere
+in the languages that have them,
+and bloated, error-prone code is everywhere
+in the languages that don't have them.
 
 > .@lojikil @andywingo surprising how much computer stuff makes sense
 > viewed as tragic deprivation of sum types (cf. deprivation of lambdas)
 
 https://twitter.com/graydon_pub/status/555046888714416128
 
-This quote is from Graydon Hoare,
+This tweet is from Graydon Hoare,
 designer of the Rust programming language
 and a programming language history buff.
 
@@ -31,15 +32,15 @@ They're also called "discriminated unions".
 
 People call programming language features "powerful" a lot.
 I think the word is overused.
+
 Algebraic data types are the real thing.
 
 
 ## Example: `Bool`
 
-I'm going to show examples in Haskell,
-because that's just a super easy default choice.
+I'm going to show examples in Haskell.
 I think this feature came from ML,
-and it's in every statically typed functional language in the ML lineage,
+and it's in most every statically typed functional language in the ML lineage,
 which includes OCaml, F#, Elm, and others.
 
     data Bool = False | True
@@ -54,8 +55,8 @@ These are not functions.
 They're not special methods or anything like that.
 They are values of type `Bool`.
 
-Type names and constructor names have to be uppercase in Haskell,
-because of reasons.
+(Type names and constructor names have to be uppercase in Haskell,
+because of reasons.)
 
 So now that we know what's going on here,
 let's re-read this line of code one word at a time:
@@ -155,14 +156,50 @@ Pattern matching fails, and we move to the next line.
     toEnglish (InTheFuture num unit) =
       show num ++ " " ++ unitToEnglish unit ++ " from now"
 
-And that's algebraic data types, pretty much.
+If the value you pass to this function happens to be in the past,
+then pattern matching fishes out the two fields of that `InThePast` value
+and binds them to these variables `num` and `unit`.
+Pretty neat, huh?
+
+And then we render them. The `++` here means string concatenation.
+
+Note that the ADT defines three constructors,
+and here we have one, two, three cases.
+If we forgot to write this third case,
+the compiler would warn us about that.
+
+
+## Example: `JSON`
+
+I have another example that might help explain what ADTs are good for.
+
+Does everybody know what JSON is?
+
+Have you read the JSON standard?
+It's remarkably short. Just 5 pages long!
+
+But the data that JSON can represent is even simpler:
+
+    data JSON = JNull
+              | JBool Bool
+              | JNum Float
+              | JStr String
+              | JArray [JSON]
+              | JObject [(String, JSON)]
+
+Does this need any explanation? No? Great. On we go.
 
 
 ## Example: `Maybe`
 
-I want to show off another feature here.
+If you're coming from dynamically-typed languages,
+you may be thinking, yeah, I'm sorry your language sucks,
+but I'm using Awesome Language X,
+where I've got strings, I've got tuples,
+and I can just pass whatever value I want wherever I want.
 
-Check out this [tweet from Dave Herman](https://twitter.com/littlecalculist/status/563590067445194753):
+All right then, smarty-pants,
+riddle me [this tweet from Dave Herman](https://twitter.com/littlecalculist/status/563590067445194753):
 
 > What's your favorite way to represent Option&lt;T&gt; in JS?
 > I'm partial to `null | { value: T }`.
@@ -179,6 +216,9 @@ but sometimes there *isn't* a value,
 and those are two different things.
 So this need is *not* addressed by nullability.
 
+*(The ECMAScript standard committee needed a way to express this
+in the iterator protocol: the return value of `.next()`.)*
+
 *(slide: highlight "Option&lt;T&gt;")*
 
 Well, what you need is what's called the option type in languages like ML.
@@ -187,59 +227,96 @@ you might write it like Dave did: `Option<T>`.
 That's how it's written in Rust.
 
 In Haskell, we write `Maybe a`.
-Just like Haskell eliminates the parentheses around the parameters you pass function calls,
+Just like Haskell eliminates the parentheses around the parameters you pass to functions,
 it also eliminates the angle brackets in parameterized types.
 
 And instead of `Option`, Haskell uses the word `Maybe` for this type.
 Maybe there's a value there. Maybe not.
 
-And how is this defined? It's quite simple:
+And how is this defined? Super simple:
 
     data Maybe a = Nothing | Just a
 
 Again, we're declaring three things here:
 `Maybe` is a type; `Nothing` and `Just` are the constructors.
+And `a` is whatever type you like.
 
 A value of type `Maybe ChessPiece` is either `Nothing`, or `Just` a `ChessPiece`.
+
+This is how `Maybe` is defined in the Haskell standard library.
 
 Are there any advantages of having a `Maybe` type in your language,
 instead of just everything being nullable all the time?
 
-One advantage is that in practice,
-most variables, most fields, most arguments,
-should never be null.
-Nullability like they have in Java is bad because it's everywhere:
-every variable, every field, every argument,
-throughout all code written in that language,
-whether you want it or not.
-In practice, you mostly don't want it.
-The default should be non-nullability.
+*   Well, for one thing, in practice,
+    most variables, most fields, most arguments,
+    should never be null.
 
-In Haskell, `Maybe X` is literally a different type from `X`,
-so if you want `Nothing` as a possible value, you have to choose that,
-and it becomes part of the type signature.
-It's opt-in.
+    Nullability like they have in Java is bad because it's everywhere:
+    every variable, every field, every argument,
+    throughout all code written in that language,
+    whether you want it or not.
+    In practice, you mostly don't want it.
+    Nullable should never be the default.
 
-The other, more important advantage is that if you do opt in,
-you will never accidentally write code that tries to use a `Maybe ChessPiece`
-as though it were a `ChessPiece`,
-without first doing a null check.
-The type system prevents it.
-You must pattern-match
-in order to get the `ChessPiece` value out of a `Maybe ChessPiece`.
+    In Haskell, `Maybe X` is literally a different type from `X`,
+    so if you want `Nothing` as a possible value, you have to choose that,
+    and it becomes part of the type signature.
+    It's opt-in.
 
-So there are no `NullPointerExceptions` in Haskell.
+*   The other, more important advantage is that if you do opt in,
+    you'll never accidentally write code that tries to use a `Maybe ChessPiece`
+    as though it were a `ChessPiece`
+    without first doing a null check.
+    The type system prevents it.
+    You must pattern-match
+    in order to get the `ChessPiece` value out of a `Maybe ChessPiece`.
+
+    And when you pattern-match, if you forget to also handle the `Nothing` case,
+    the compiler sees that, and it'll warn you about it.
+
+    So there are no `NullPointerExceptions` in Haskell.
+
+
+## Boom
+
+This is why I say ADTs are "powerful"
+and the lack of them in mainstream languages is "tragic".
+
+1.  ADTs close a significant type-safety hole in other statically-typed languages!
+
+    Because this concept of a value being maybe one thing, maybe
+    another thing? Or maybe a third thing?
+    That's *everywhere* in programming, once you start looking for it—
+    it subsumes nullability, *just for starters*—
+    and implementing something like that in Java or C# or C++
+    requires complicated classes
+    and causes the type system to throw up its hands.
+    `NullPointerException`s and `ClassCastException`s follow.
+    Or if you're using C++ `union`s, undefined behavior, which is even worse.
+
+2.  ADTs close a significant expressivity gap between static and dynamic languages!
+
+    They make it possible to throw around values of multiple types
+    *almost* like you do for free in Ruby or Clojure or Elixir.
+    You want a function that takes "either a function or an integer" as the argument?
+    No sweat. Make a one-line ADT with two constructors and get going.
+
+A single feature doing both these things is pretty remarkable.
 
 
 ## Example: `Tree`
 
-One more example, just to show you how powerful this feature is.
-You can really express a lot with a line of code.
+Can we do one more example?
 
     data Tree a = Empty | Node (Tree a, a, Tree a)
 
 Here we express the data structure for a binary tree
 in one line of code.
+
+A tree is either the empty tree,
+or it contains a triple: both a value of type `a`,
+and a left tree and a right tree.
 
 This is not some theoretical thing that you *could* do, if you were crazy.
 Crack open Okasaki's book, *Purely Functional Data Structures*,
@@ -329,13 +406,6 @@ They can define *discriminated unions,*
 that is, types that are either A or B or C,
 different possibilities that might include different kinds of fields.
 
-This concept is everywhere in programming--
-it subsumes nullability, for starters--
-and implementing something like it in Java or C# or C++
-requires complicated classes
-and causes the type system to throw up its hands.
-`NullPointerException`s and undefined behavior naturally follow.
-
 
 ## Why do we care?
 
@@ -352,8 +422,7 @@ Let me give you three reasons.
 2.  ADTs and pattern matching cooperate
     really, really, *really* smoothly
     to maintain type safety.
-    You can have `Maybe` variables in Haskell
-    without the possibility of `NullPointerException`s.
+    No downcasting, no `NullPointerException`s. Ever.
 
 3.  This is the big one though.
 
@@ -364,19 +433,23 @@ Let me give you three reasons.
     Like, say you have a timestamp
     and you want to display it approximately.
     You could write one function to do the whole thing.
+    Maybe that's how you would do it in Java.
 
-        exactTimeToRoughEnglish
+        exactTimeToRoughEnglish t
 
-    In a functional language you might break that in two:
+    In a functional language, you might break that into three parts:
 
-        exactToRoughTime |> toEnglish
+    *   get the current time now;
+    *   compute the RoughTime between now and the target timestamp;
+    *   convert the RoughTime to English text.
 
-    Now both parts are separately testable and so on.
+    Only one of those is nondeterministic.
+    The other two are separately testable and so on.
 
-    But note that the value returned by `exactToRoughTime`
-    and passed to `toEnglish` is this `RoughTime` thing.
+    But note that the value returned by step 2,
+    and passed to step 3, is this `RoughTime` thing.
     So this factoring is only possible
-    because we can define `RoughTime` without much effort.
+    because we can define the `RoughTime` type with minimal effort.
     Try to do that in Java,
     and you're gonna have a rough time.
 
@@ -394,7 +467,7 @@ Let me give you three reasons.
 
 Just as a bonus, I saw this article a while back.
 
-Erik Kidd wrote this back in 2007:
+Eric Kidd wrote this back in 2007:
 
 > Sometime back in elementary school, I first asked teachers, "What
 > happens when you divide infinity by 2?" Some teachers couldn't answer,
@@ -404,6 +477,7 @@ Eric is right to be skeptical of this answer, don't you agree?
 
 So he decides to tackle this question for real, once and for all, the right way:
 ask Haskell.
+
 Haskell wouldn't tell you something if it wasn't so.
 
 > A number is either zero, or the successor of another number. We can write that in Haskell as:
@@ -414,9 +488,13 @@ Haskell wouldn't tell you something if it wasn't so.
 That sentence, incidentally, is most of the definition of natural numbers.
 Like, for-real mathematicians will tell you that's what numbers are.
 
-He then defines a function that performs addition on `Nat` values. And so on.
+(The `deriving` keyword asks Haskell to autogenerate some code for us.
+Because we're `deriving Eq`, the `==` operator automatically works on `Nat` values.)
 
-But this is where things get interesting:
+Eric then implements addition on `Nat` values. And so on.
+Blah blah blah.
+
+This is where things get interesting:
 
 >     infinity = Succ infinity
 
