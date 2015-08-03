@@ -5,7 +5,7 @@
 
 ## Motivation
 
-Algebraic data types are boring, and this talk would boring,
+Algebraic data types are boring, and this talk would be boring,
 except that algebraic data types are also very practical.
 They are everywhere
 in the languages that have them,
@@ -257,14 +257,14 @@ instead of just everything being nullable all the time?
     throughout all code written in that language,
     whether you want it or not.
     In practice, you mostly don't want it.
-    Nullable should never be the default.
+    Nullable is a really terrible default.
 
     In Haskell, `Maybe X` is literally a different type from `X`,
     so if you want `Nothing` as a possible value, you have to choose that,
     and it becomes part of the type signature.
     It's opt-in.
 
-*   The other, more important advantage is that if you do opt in,
+*   And, if you do opt in,
     you'll never accidentally write code that tries to use a `Maybe ChessPiece`
     as though it were a `ChessPiece`
     without first doing a null check.
@@ -273,36 +273,9 @@ instead of just everything being nullable all the time?
     in order to get the `ChessPiece` value out of a `Maybe ChessPiece`.
 
     And when you pattern-match, if you forget to also handle the `Nothing` case,
-    the compiler sees that, and it'll warn you about it.
+    the compiler sees that. And it'll warn you about it.
 
-    So there are no `NullPointerExceptions` in Haskell.
-
-
-## Boom
-
-This is why I say ADTs are "powerful"
-and the lack of them in mainstream languages is "tragic".
-
-1.  ADTs close a significant type-safety hole in other statically-typed languages!
-
-    Because this concept of a value being maybe one thing, maybe
-    another thing? Or maybe a third thing?
-    That's *everywhere* in programming, once you start looking for it—
-    it subsumes nullability, *just for starters*—
-    and implementing something like that in Java or C# or C++
-    requires complicated classes
-    and causes the type system to throw up its hands.
-    `NullPointerException`s and `ClassCastException`s follow.
-    Or if you're using C++ `union`s, undefined behavior, which is even worse.
-
-2.  ADTs close a significant expressivity gap between static and dynamic languages!
-
-    They make it possible to throw around values of multiple types
-    *almost* like you do for free in Ruby or Clojure or Elixir.
-    You want a function that takes "either a function or an integer" as the argument?
-    No sweat. Make a one-line ADT with two constructors and get going.
-
-A single feature doing both these things is pretty remarkable.
+    So there are no `NullPointerException`s in Haskell.
 
 
 ## Example: `Tree`
@@ -409,11 +382,13 @@ different possibilities that might include different kinds of fields.
 
 ## Why do we care?
 
-Why is this useful?
+So what?
 
-Let me give you three reasons.
+I said algebraic data types are "powerful"
+and the lack of them in mainstream languages is "tragic".
+How can I back that up?
 
-1.  An ADT does so much with so little code!
+1.  An ADT does a ton with a little code.
 
     It defines types, constructors, pattern-matching syntax,
     and Haskell will even autogenerate default implementations
@@ -421,10 +396,31 @@ Let me give you three reasons.
 
 2.  ADTs and pattern matching cooperate
     really, really, *really* smoothly
-    to maintain type safety.
+    to support type safety.
     No downcasting, no `NullPointerException`s. Ever.
 
-3.  This is the big one though.
+    ADTs close a significant type-safety hole in other statically-typed languages!
+
+    Because this concept of a value being maybe one thing, maybe
+    another thing? Or maybe a third thing?
+    That's *everywhere* in programming, once you start looking for it—
+    it subsumes nullability, *just for starters*—
+    and implementing something like that in Java or C# or C++
+    requires complicated classes
+    and causes the type system to throw up its hands.
+    `NullPointerException`s and `ClassCastException`s follow.
+    Or if you're using C++ `union`s, undefined behavior, which is even worse.
+
+3.  ADTs close a significant expressivity gap between static and dynamic languages!
+
+    They make it possible to throw around values of multiple types
+    *almost* like you do for free in Ruby or Clojure or Elixir.
+    You want a function that takes "either a function or an integer" as the argument?
+    No sweat. Make a one-line ADT with two constructors and get going.
+
+    A single feature both improving type safety *and* doing this is pretty remarkable.
+
+4.  This is the big one though.
 
     In functional programming, your go-to technique
     is to break things down into functions.
@@ -449,11 +445,11 @@ Let me give you three reasons.
     But note that the value returned by step 2,
     and passed to step 3, is this `RoughTime` thing.
     So this factoring is only possible
-    because we can define the `RoughTime` type with minimal effort.
+    because we can define the `RoughTime` type concisely.
     Try to do that in Java,
     and you're gonna have a rough time.
 
-        ADTs = easy types
+        ADTs = easy types = better code
 
     **Algebraic data types make it easy
     to spell out the domain and range of functions,**
@@ -463,7 +459,7 @@ Let me give you three reasons.
     Sometimes, a little pattern matching, and you're almost done already.
 
 
-## One more thing
+## Infinity!
 
 Just as a bonus, I saw this article a while back.
 
