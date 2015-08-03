@@ -313,7 +313,7 @@ In broad strokes, the idea is this.
 An "algebra" is when you have three things:
 
 1.  You have some set of conceptual **things** to do algebra with,
-    like say the real numbers.
+    like, say, the real numbers.
 
 2.  You define **operations** on those things,
     like in the case of numbers, you have addition, multiplication, and so on.
@@ -325,11 +325,11 @@ If you've got those three things, you've got an algebra,
 and for some people this is very exciting, I suppose, because you can prove things.
 
 Or to say all this in a few words, an algebra is always
-"What if these things were values?
+"What if we treat these things like values?
 What if we had operators on these things?"
 
 So if you think of data types, could we define operators on types?
-Well, yes, we could, because you can think of types as sets of values,
+Well, sure we could, because you can think of types as sets of values,
 and there *are* operators on sets.
 
 The vertical bar here, for example, looks like an operator:
@@ -347,8 +347,9 @@ So this vertical bar is something like an addition operator.
 Hence "sum types".
 
 Another reason is that *the number of different possible values*
-in a discriminated union is, quite simply,
+in a sum type is, quite simply,
 the *sum* of the number of different values each constructor can create.
+
 Maybe you can also see why tuples are called "product types".
 
     data Curry = Red | Green | Panang | Massaman  --  4 curries
