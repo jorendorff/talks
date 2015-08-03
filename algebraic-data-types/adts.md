@@ -300,9 +300,7 @@ that's essentially identical to this.
 
 ## Why "algebraic"?
 
-*(slide: "'algebraic' data types", "'sum' types")*
-
-OK, so just a word or two about this terminology.
+*(slide: "algebraic" data types, "sum" types)*
 
 Why do we call them *algebraic* data types?
 
@@ -310,10 +308,9 @@ Well, it's because this feature came from academia,
 and if you're in computer science academia,
 this word is nothing but appealing.
 
-The notion of "algebras", plural, being a thing in computing,
-is not something I'm going to completely explain in the next 30 seconds.
-But in broad strokes, the idea is this.
-An "algebra" is when have three things:
+Mathematicians love algebras.
+In broad strokes, the idea is this.
+An "algebra" is when you have three things:
 
 1.  You have some set of conceptual **things** to do algebra with,
     like say the real numbers.
@@ -328,13 +325,14 @@ If you've got those three things, you've got an algebra,
 and for some people this is very exciting, I suppose, because you can prove things.
 
 Or to say all this in a few words, an algebra is always
-"What if we had operators on these things?"
+"What if these things were values?
+What if we had operators on these things?"
 
 So if you think of data types, could we define operators on types?
 Well, yes, we could, because you can think of types as sets of values,
 and there *are* operators on sets.
 
-The vertical bar here, for example, strongly resembles an operator:
+The vertical bar here, for example, looks like an operator:
 
     data JSON = JNull
               | JBool Bool
@@ -353,7 +351,12 @@ in a discriminated union is, quite simply,
 the *sum* of the number of different values each constructor can create.
 Maybe you can also see why tuples are called "product types".
 
-*(I'm not super happy with this.
+    data Curry = Red | Green | Panang | Massaman  --  4 curries
+    data Stuff = Chicken | Pork | Tofu            --  3 "meats"
+
+    type LunchSpecial = (Curry, Stuff)            -- 12 combinations
+
+*(I'm not super happy with all this.
 ISTM the word "algebraic" has another meaning here:
 Algebraic data types also encourage a rather mathematical way of thinking about
 the concrete types being defined.
