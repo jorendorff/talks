@@ -2,6 +2,11 @@ Some talks I've given. Mostly on programming.
 
 In this repository:
 
+*   [Sharing and mutability in Rust](rust-mutability/rust-mutability.md)
+
+    > Rust makes it easy to implement purely functional data
+    > structures... and then mutate them.
+
 *   [Algebraic data types](algebraic-data-types/adts.md)
 
     > People call programming language features "powerful" a lot.
