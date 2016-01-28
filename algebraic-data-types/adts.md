@@ -459,7 +459,7 @@ How can I back that up?
     to spell out the domain and range of functions,**
     which goes a long way toward documenting
     what those functions are supposed to do,
-    and even, sometiems, a long way towards implementing them.
+    and even, sometimes, a long way towards implementing them.
     Sometimes, a little pattern matching, and you're almost done already.
 
 
