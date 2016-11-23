@@ -277,7 +277,7 @@ to implement purely functional data structures...
 
 ```rust
 impl<T> List<T> {
-    fn push(&mut self, value: T) {
+    fn push_front(&mut self, value: T) {
         let mut tmp = List::Nil;
         std::mem::swap(&mut tmp, self);
         *self = List::Cons(Rc::new((value, tmp)));
@@ -289,8 +289,8 @@ This allows you to write stuff like:
 
 ```rust
 let mut my_list = List::Nil;
-my_list.push("world");
-my_list.push("hello");
+my_list.push_front("world");
+my_list.push_front("hello");
 ```
 
 Maybe there is nothing wrong with mutating a purely functional data structure,
