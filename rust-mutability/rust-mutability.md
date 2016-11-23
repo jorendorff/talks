@@ -242,7 +242,7 @@ impl<T> for List<T> {
     fn head(&self) -> Option<&T> {
         match _self {
             List::Nil => None,
-            List::Cons(ref pp) => Some(&(_*pp).0)
+            List::Cons(ref pp) => Some(&(**pp).0)
         }
     }
 }
