@@ -416,7 +416,7 @@ over a possibly slow network.
 We are trying to keep everyone in sync.
 That's it. That's the problem we're trying to solve here.
 
-*(slide: same picture, "Goal: keep copies in sync over a slow network")*
+![(slide: Picture of many text files. "Goal: keep copies in sync over a slow network".)](images/goal.png)
 
 And apparently if you work on web sites long enough,
 you'll have that problem at a large scale inside your site's back end.
@@ -433,7 +433,7 @@ It's a commonplace problem and it's very hard.**
 
 In fact, it's impossible.
 
-*(slide: circle "in sync", add "??!?!")*
+![(slide: circle "in sync", add "??!?!")](images/goal-impossible.png)
 
 I said "keep all these copies *in sync* over a possibly slow network"
 but let's be real.
@@ -620,7 +620,7 @@ and even of how we think about time in reality.
 In a distributed system, this is the shape of time.
 And there's a real-world analog.
 
-*(slide: light cones)*
+![(slide: light cones)](images/light-cones.png)
 
 In our universe, according to relativity,
 the speed of light is a hard limit on how fast information can travel through space.
