@@ -14,7 +14,7 @@ Last year at Nodevember,
 
 But really it was about the shape of time.
 
-![(a picture of paths diverging in a wood)](images/two-roads-diverged.png)
+![(a picture of paths diverging in a wood)](images/two-roads-diverged.jpg)
 
 I said at the start of that talk,
 you know, the shape of time can get really weird,
@@ -42,7 +42,7 @@ Today's the day.
 My name is Jason,
 and the story I want to tell you today starts with this box.
 
-*(slide: a textarea)*
+![(picture of a text box)](images/textarea.png)
 
 I decided to write a *shared textarea* in JavaScript.
 You know what a `textarea` is, right?
@@ -52,7 +52,7 @@ So I can see what you're typing, as you type it,
 and you can see what I'm typing,
 and not just two people but dozens of people around the world can use it at once.
 
-*(slide: a shared textarea)*
+![(a shared textarea)](images/textarea-shared.png)
 
 And that's what I want to show you today.
 
@@ -157,39 +157,40 @@ OK, maybe there are multiple problems here.
 The big one is what happens if multiple people are editing at the same time.
 Let's step through it.
 
-*(slide: two clients and a server; server has `text = ""`)*
+![(slide: two clients and a server, all blank)](images/clobber-empty.png)
 
 Suppose I type "j", because I'm typing my name,
 and *at the same time*, you type "B", because you want to type "Batman".
 My browser sends an update to the server.
 Your browser sends an update to the server.
 
-*(slide: two snails racing to the server)*
+![(slide: two snails racing to the server)](images/clobber-snail-race-1.png)
 
 Let's say mine gets there first.
 So the server says, OK, the document now says "j".
 And it broadcasts an update that says "j".
 
-*(slide: server has `text = "j"`)*
+![(slide: my snail passes yours on the way to deliver "j" to your client)](images/clobber-snail-race-2.png)
 
 Then *your* update arrives at the server.
 So the server says, OK, the document now says "B".
 And it notifies *me* of the change.
 
-*(slide: server has `text = "B"`, snails heading to clients)*
+![(slide: a snail goes to deliver "B" to me)](images/clobber-snail-race-3.png)
 
 At the end of this,
 
-*(slide: final state)*
+![(slide: final state)](images/clobber-snail-race-results.png)
 
 my screen says "B",
 and your screen says "j".
 The server thinks the document says "B".
 My work got clobbered.
 
-*(slide: mega snail races)*
-
 But it's not over!
+
+![(slide: mega snail races)](images/clobber-mega-snail-race.png)
+
 More updates are already on the way to the server,
 because we've both been typing.
 You can see this is never going to work.
