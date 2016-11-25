@@ -662,7 +662,7 @@ If we can handle all possible conflicts between inserts and deletes, we're done.
 It helps a bit if we think of our string of text as an actual string,
 like a string of beads.
 
-*(slide: string of beads, insert & delete)*
+![(slide: string of beads, insert & delete)](images/beads.png)
 
 That's the actual data we care about;
 now we just have to figure out what extra metadata or history we need to resolve conflicts.
@@ -680,15 +680,15 @@ other people's edits will cause things to move around, and you'll get divergence
 We need a way of saying "where to insert" and "what to delete" that is robust.
 RGA gets this by assigning each character a unique id.
 
-*(slide: string of beads, unique ids, insert and delete)*
+![(slide: add unique ids and descriptions of the insert & delete changes that use the ids)](images/beads-with-ids.png)
 
 But wait, how do our many users generate unique ids?
 This is not so hard.
 First we have to assign each replica (each user) a unique id.
 I have the server do that when you connect.
 Then the characters get two-part ids, as shown.
-The first number just counts up;
-the second number is the replica where the character was first inserted.
+The first number just counts up: 1, 2, 3, 4, 5.
+The second number is the replica where the character was first inserted.
 You can see the characters in "hello" were typed on replica 1,
 and the characters in "world" were typed on replica 2.
 
@@ -706,6 +706,8 @@ Pull requests are welcome!
 
 So let's try it out.
 This is it. Big finish.
+
+It's called Peeredit.
 
 *([Peeredit is easy to grab and run!](https://github.com/jorendorff/peeredit))*
 
@@ -853,7 +855,7 @@ even once you get a working replica of the data into everyone's browser,
 this RGA object,
 you still have another copy of the document: the editor itself.
 
-    *(slide: object with correct text <--> Ace editor)*
+![(slide: object with correct text on one side; Ace editor on the other)](images/two-problems.png)
 
 The editor is another replica!
 Worse, it's an uncooperative replica.
@@ -861,7 +863,7 @@ It's not a CRDT; it wasn't designed with that in mind.
 If you communicate with it asynchronously, via the event loop,
 then you've got all the same problems again *inside the browser*.
 
-    *(slide: same picture, plus snails)*
+![(slide: same picture, plus snails)](images/two-problems-snail.png)
 
 This I solved using brute force.
 If you want the awful details, you can peek at the source.
