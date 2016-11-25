@@ -10,23 +10,23 @@ Last year at Nodevember,
 [I gave a talk about tic tac toe](https://github.com/jorendorff/game-playing/blob/master/talk.md)
 ([video](https://www.youtube.com/watch?v=j8qC9VXGcmA)).
 
-*(slide: linear tic tac toe timeline)*
+![(a timeline of a game of tic-tac-toe)](images/tic-timeline.png)
 
 But really it was about the shape of time.
 
-*(slide: paths diverge in a wood)*
+![(a picture of paths diverging in a wood)](images/two-roads-diverged.png)
 
 I said at the start of that talk,
 you know, the shape of time can get really weird,
 especially if you're into special relativity
 or distributed systems.
 
-*(slide: light cones)*
+![(a picture of light cones)](images/light-cones.png)
 
 "But don't worry," I said.
 "We won't be talking about any of the really weird stuff today."
 
-*(slide: me in front of light cones saying "no light cones in this talk lol")*
+*(slide: me in front of light cones saying "haha j/k")*
 
 Well.
 
@@ -34,7 +34,7 @@ Well.
 
 Today's the day.
 
-*(slide: `<textarea distributed>`)*
+![title slide](images/title.png)
 
 
 ## Intro
@@ -404,8 +404,6 @@ So here's my question for you.
 I think the problem is that we can't avoid having
 a full copy of the document
 at each client.
-
-*(slide: picture of each client with a sheet of paper)*
 
 So fundamentally we're trying to keep all these copies in sync
 as changes are happening everywhere,
