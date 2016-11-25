@@ -246,7 +246,7 @@ I didn't have my any of my work just *vanish*.
 But take a look at the screen.
 Is this the same text you've got on your screen?
 
-*(some people say no, if we're lucky)*
+*(some people say no, most likely)*
 
 No. Quill gets confused.
 Our editors get out of sync.
@@ -262,7 +262,7 @@ Shout 'em out. It's OK to be wrong.
 This is important to understand before we go on.
 Let's go back to our batmorendorff example.
 
-*(slide: racing snails bearing Quill deltas)*
+![(slide: racing snails bearing Quill deltas)](images/quill-1.png)
 
 When you type "Batman", the Quill delta might say,
 "insert `Batman` at line 1, column 1".
@@ -274,12 +274,12 @@ Meanwhile I generate a delta that says,
 The server simply forwards our deltas along.
 So what happens when you receive my delta?
 
-*(slide: snail 1 arrives)*
+![(slide: snail 1 arrives)](images/quill-2.png)
 
 Well, Quill simply inserts `jorendorff` at the beginning of line 1.
 So your document says `jorendorffBatman`.
 
-*(slide: snail 2 arrives)*
+![(slide: snail 2 arrives)](images/quill-3.png)
 
 And when I receive your delta,
 Quill inserts `Batman` at the beginning of line 1.
