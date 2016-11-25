@@ -85,7 +85,7 @@ and it may not be entirely perfect.
 But go ahead and connect to this URL and try it out.
 
 *(If you've got Node, [run this server](https://github.com/jorendorff/clobberation)
-and ask some friends to connect!)*
+and ask some friends to connect! It's super easy!)*
 
 *(clobberation is awful)*
 
@@ -98,8 +98,6 @@ So how was that?
 So that wasn't great? It was actually terrible? Hmm.
 Do you think I can blame it on the wifi? No?
 
-*(slide)*
-
 Well, [here's the complete source code
 of the server you just connected to](https://github.com/jorendorff/clobberation/blob/master/index.js)
 (27 lines of code).
@@ -108,21 +106,27 @@ and *why it breaks down.*
 I'm not going to go line by line through all this, but
 let's look at a few lines in particular.
 
-    var text = "";
+```javascript
+var text = "";
+```
 
 This is the full state of our shared text editor.
 Just a global string variable on the server.
 After all, a text file is just a string.
 That's why we'll be talking about strings a lot, later on.
 
-    io.on('connection', function (socket) {
+```javascript
+io.on('connection', function (socket) {
+```
 
 And here's the main part of the app.
 
-    socket.on('update', function (msg) {
-      text = msg;
-      socket.broadcast.emit('update', msg);
-    });
+```javascript
+socket.on('update', function (msg) {
+  text = msg;
+  socket.broadcast.emit('update', msg);
+});
+```
 
 So let me tell you how this works.
 I'm using a library called socket.io to handle networking between the browser and the server,
