@@ -2,8 +2,9 @@
 
 21 November 2016
 
-*(This is a transcript of a talk I gave at Nodevember 2016,
-and previously at NashFP and a few other local user groups.
+*(This is a transcript of a talk I gave at Nodevember 2016—[here's
+the video](http://youtu.be/vCkSLX7nR9Y)—and previously
+at [NashFP](http://nashfp.org/) and a few other local user groups.
 Thanks to [Max Beizer](https://twitter.com/maxbeizer) for Heroku help!)*
 
 Last year at Nodevember,
