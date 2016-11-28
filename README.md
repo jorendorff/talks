@@ -2,6 +2,14 @@ Some talks I've given. Mostly on programming.
 
 In this repository:
 
+*   [`<textarea distributed>`](textarea-distributed/textarea-distributed.md)
+
+    > And it's at this point that I get a little frustrated. Why is this
+    > so hard? All we want to do is edit a text file. This should be
+    > easy. Instead we keep failing. Just one approach after another
+    > *stinks,* and the kids are starting to ask their mother, "Why is
+    > daddy so angry all the time?"
+
 *   [Sharing and mutability in Rust](rust-mutability/rust-mutability.md)
 
     > Rust makes it easy to implement purely functional data
