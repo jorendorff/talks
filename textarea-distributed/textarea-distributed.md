@@ -596,7 +596,7 @@ A lot of these ideas are quite new.
 
 The paper contains diagrams like this one:
 
-*(slide: Figure 6)*
+![(slide: Figure 6 of the paper)](images/figure-6.png)
 
 You can see three different replicas here,
 and these arrows are timelines, each replica's life line.
