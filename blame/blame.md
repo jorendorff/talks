@@ -301,7 +301,7 @@ I want to make some general points about failures and safety.
 
     I'm so old, I can remember a time
     when it looked like this was a technical problem.
-    Things have changed since then.
+    It looks different now.
 
 3.  **Failures have a web of causes.**
 
