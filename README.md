@@ -4,6 +4,15 @@ In this repository:
 
 *   [Don't blame the decaf: What really causes software failures (and successes)](blame/blame.md)
 
+    > The overdoses caused burns and radiation poisoning.
+    > Three of the patients died.
+    > These accidents remain the worst in the history of radiation medicine.
+    >
+    > This talk is in two parts.
+    > The first half is about this medical device and why it malfunctioned.
+    > The second half is about what safety means now,
+    > whether things are any better in 2017 than they were in 1982.
+
 *   [`<textarea distributed>`](textarea-distributed/textarea-distributed.md)
 
     > And it's at this point that I get a little frustrated. Why is this
