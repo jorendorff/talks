@@ -1,5 +1,10 @@
 # Don't blame the decaf: What really causes software failures (and successes)
 
+> I say, there’s some hilarious inflated job titles out there...
+> sandwich “technician”, tree “surgeon”, software “engineer” lol
+
+—[@mrspeaker](https://twitter.com/mrspeaker/status/930843358997688320)
+
 *This is a talk I gave for a class at Vanderbilt
 and another class at Nashville Software School
 in December 2017.
@@ -110,7 +115,8 @@ Get comfortable.
 
     It happens in game development all the time.
     You have a game, and there's, I don't know, some kind of monster,
-    and the monster has a status bit on it, it's either alive or dead.
+    and the monster has a status bit on it,
+    [it's either alive or dead](https://twitter.com/BioMarkDarrah/status/908918764107792385).
     Well, you get the game working, everything's great,
     and you decide there should be a death animation for this monster.
     So you add a third status: dying.
