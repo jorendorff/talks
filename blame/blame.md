@@ -1,10 +1,5 @@
 # Don't blame the decaf: What really causes software failures (and successes)
 
-> I say, there’s some hilarious inflated job titles out there...
-> sandwich “technician”, tree “surgeon”, software “engineer” lol
-
-—[@mrspeaker](https://twitter.com/mrspeaker/status/930843358997688320)
-
 *This is a talk I gave for a class at Vanderbilt
 and another class at Nashville Software School
 in December 2017.
