@@ -131,27 +131,30 @@ Get comfortable.
     *then*, once it's ready, the operator hits the button one last time to confirm;
     *then* the machine delivers the dose of radiation.
 
-    Instead, the machine started setting itself up for treatment as soon
-    as the operator got to the end of the form. But the operator could
-    still go back and edit the form after that. This was apparently
-    intentional. The software was designed to detect if you did this and
-    cancel out of the treatment cycle. However, that code was buggy. As
-    a result, you could edit the treatment parameters while the machine
-    was already halfway through the process of setting itself up to
-    deliver radiation to the patient.
+    Instead, the machine started setting itself up for treatment
+    as soon as the operator got to the end of the form.
+    But the operator could still go back and edit the form after that.
+    This was apparently intentional.
+    The software was designed to detect if you did this
+    and cancel out of the treatment cycle.
+    However, that code was buggy.
+    As a result, you could edit the treatment parameters
+    while the machine was already halfway through the process of setting itself up
+    to deliver radiation to the patient.
 
 *   **Programming mistakes.** Multiple distinct mistakes by programmers
     contributed to the confusion I just described.
 
     Dumb mistakes, the kind we make every day.
-    Instructions that looked like they did one thing, but
-    accidentally did the wrong thing, or didn't even run.
+    Instructions that looked like they did one thing,
+    but accidentally did the wrong thing, or didn't even run.
     Using an AND instead of an OR. Mistakes.
 
-*   **No hardware interlocks.** An interlock is a physical mechanism
-    that rules out dangerous situations. Traditionally, this kind of
-    machine would have some kind of electromechanical interlock to
-    ensure safety. The Therac-25 relied on software checks instead.
+*   **No hardware interlocks.**
+    An interlock is a physical mechanism that rules out dangerous situations.
+    Traditionally, this kind of machine would have some kind of electromechanical interlock
+    to ensure safety.
+    The Therac-25 relied on software checks instead.
 
 *   **Code reuse.** The Therac-25 reused code from an earlier radiation machine.
     Obviously the assumption was that, since the earlier model was deployed
@@ -160,15 +163,18 @@ Get comfortable.
     but in the old model they resulted in blown fuses instead of
     overdoses, because the old model had hardware interlocks.
 
-*   **Frequent minor errors.** Operators became "insensitive to machine
-    malfunctions. Malfunction messages were commonplace and most did not
-    involve patient safety." When the machine had a malfunction, it would
-    "pause", and the operator could either do a full machine reset or
-    press the P key to proceed.
+*   **Frequent minor errors.**
+    Operators became "insensitive to machine malfunctions.
+    Malfunction messages were commonplace and most did not involve patient safety."
+    When the machine had a malfunction, it would "pause",
+    and the operator could either turn the machine off,
+    call the manufacturer, and get nothing useful from them;
+    or press the P key to proceed.
 
-*   **General bad software quality.** One user complained about "poor
-    screen-refresh subroutines that leave trash and erroneous
-    information on the operator console". A bad sign.
+*   **General bad software quality.**
+    One user complained about "poor screen-refresh subroutines
+    that leave trash and erroneous information on the operator console".
+    Not a good sign.
 
 What do you think? What jumps out at you?
 
