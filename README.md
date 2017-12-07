@@ -2,6 +2,8 @@ Some talks I've given. Mostly on programming.
 
 In this repository:
 
+*   [Don't blame the decaf: What really causes software failures (and successes)](blame/blame.md)
+
 *   [`<textarea distributed>`](textarea-distributed/textarea-distributed.md)
 
     > And it's at this point that I get a little frustrated. Why is this
