@@ -388,7 +388,25 @@ Here I will not separate technical and organizational factors;
 I'm just going to give them to you in one big blob.
 
 *   **Version control.**
-    Obviously.
+    That is, we use a system like Git for sharing code
+    and tracking the history of our code.
+    It records all the changes ever made in the project, who made them, and when.
+    What does this have to do with quality?
+
+    That history is really handy for anyone trying to fix anything.
+    It's useful in many ways, large and small.
+    Version control makes it easy to undo changes, for example.
+    We also use it when we find a bug,
+    to build and run older versions of the browser and see if they have the bug too.
+    Often we can pinpoint the exact change that introduced the bug this way,
+    even if it happened years ago.
+    That makes the bug a lot easier to fix.
+
+    And, when we have some code that isn't used anymore,
+    we can delete it.
+    We don't have to keep it around "just in case".
+    If we ever need that code again, it's in the history.
+    (Pop quiz. Why is deleting code important?)
 
 *   **Issue tracking.**
     If you want to build awful, buggy software,
