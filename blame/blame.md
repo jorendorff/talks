@@ -664,3 +664,16 @@ I will end with two very simple observations.
     Quality engineering is process engineering.
 
 Thank you.
+
+----
+
+*Shilo Anders asked me to give a talk about the real world.
+[Evan Roane](https://twitter.com/RoaneZone) got me interested in Therac-25.
+I got the phrase "programmer diligence" from conversations with
+[Calvin Bottoms](https://twitter.com/calvinb),
+[Joshua Bush](https://twitter.com/digitalBush),
+and [Jim Cowart](https://twitter.com/ifandelse) of LeanKit.
+I think they got it from [Bryan Hunter](https://twitter.com/bryan_hunter).
+Thanks to the students of
+[Nashville Software School](https://twitter.com/NashSoftware) cohort 21
+for really listening and asking good questions.*
