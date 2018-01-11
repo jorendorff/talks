@@ -25,10 +25,12 @@ Let's get going...
 Your computer is a decision-making machine.
 Say you've got an `if` statement.
 
-    if (the light is off) {
-        turn the light on;
-    }
-    look for keys;
+```javascript
+if (the light is off) {
+    turn the light on;
+}
+look for keys;
+```
 
 There's a decision point in this code.
 At the end of the first line,
@@ -40,17 +42,19 @@ This kind of decision point is called a *branch*.
 Normal code is full of branches.
 They're everywhere.
 
-    while (sink is not empty) {   <--- branch
-        do dishes;
-    }
+```javascript
+while (sink is not empty) {   <--- branch
+    do dishes;
+}
 
-    switch (game.mode) {  <--- branch
-        case EASY_MODE: ...;
-        case HARD_MODE: ...;
-        ...
-    }
+switch (game.mode) {  <--- branch
+    case EASY_MODE: ...;
+    case HARD_MODE: ...;
+    ...
+}
 
-    return;  <--- branch
+return;  <--- branch
+```
 
 It's not a problem, unless you're a CPU.
 
@@ -152,10 +156,12 @@ In five steps:
 
     One way to do that is to read off the end of a typed array.
 
-        if (index < array.length) {         // CPU expects this to be true
-            let secretByte = array[index];  // index is actually > array.length
-            ...
-        }
+    ```javascript
+    if (index < array.length) {         // CPU expects this to be true
+        let secretByte = array[index];  // index is actually > array.length
+        ...
+    }
+    ```
 
     For now, just accept that this is allowed.
     Obviously it shouldn't be.
@@ -187,10 +193,12 @@ In five steps:
     the next thing you do is look up element number 65 in a separate array,
     one that you created.
 
-        if (index is in bounds) {
-            let secretValue = array1[index];
-            let dontCare = array2[secretValue];
-        }
+    ```javascript
+    if (index < array1.length) {
+        let secretByte = array1[index];
+        let dontCare = array2[secretByte];
+    }
+    ```
 
     I know, this looks super pointless.
     But this is what it looks like when you’re trying to smuggle information
@@ -267,6 +275,7 @@ With Spectre, it's easiest to block step 5.
 That's why all browsers are now rounding off the value of `performance.now()`
 and disabling something called `SharedArrayBuffer`.
 We're trying to eliminate this timing attack by eliminating timers.
+
 It's not good enough.
 We expect to see attacks that don't require precise timers,
 so we're going to have to somehow keep JIT code from accessing secrets even speculatively.
