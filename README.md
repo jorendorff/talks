@@ -13,6 +13,14 @@ In this repository:
     > The second half is about what safety means now,
     > whether things are any better in 2017 than they were in 1982.
 
+*   [Meltdown and Spectre in 5 minutes](meltdown-spectre/meltdown-spectre.md)
+
+    > Now we're in a scenario from a science fiction story. You're an
+    > evil secret agent, and you've obtained the top-secret information!
+    > But the universe you're living in is a spurious universe. A
+    > mistake universe. Mere nanoseconds from now, the CPU is going to
+    > detect the mistake and roll all this back...
+
 *   [`<textarea distributed>`](textarea-distributed/textarea-distributed.md)
 
     > And it's at this point that I get a little frustrated. Why is this
