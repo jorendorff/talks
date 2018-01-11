@@ -612,8 +612,8 @@ Here are a few more things, just for fun.
     is around three million dollars.
 
 We actually have *more* tools and technologies and practices and process rules
-and coding conventions that affect quality and security,
-*(like the profiler, like compartments, like process separation and sandboxing)*
+and coding conventions that affect quality and security
+*(like the profiler, like compartments, like process separation and sandboxing)*,
 and I'd love to talk about them,
 but they start to get very Firefox-specific,
 so I'll stop here.
@@ -631,6 +631,9 @@ There is one quality technology we have that's a programming language:
     Rust rules out dozens of common C++ bugs. This is a big deal for us.
 
 So. This is our toolkit, and you can use these tools too.
+You don't want all this stuff on every project;
+this is a pretty expensive investment we've made.
+My point is that there are many opportunities to invest.
 
 
 ## Conclusion
@@ -655,24 +658,31 @@ I will end with two very simple observations.
     I am giving you permission on behalf of your future managers.
     I'm from the future. They told me to tell you it's OK.
 
-    You probably won't work on safety-sensitive systems, not right away.
+    You may not work on safety-sensitive systems, not right away.
     But you will work in places that have quality problems.
-    You'll find that what they really have is quality process problems.
+    You'll find that what they really have is quality *process* problems.
 
     Fix them.
 
-    If you go into industry, you'll be green at first.
+    If you're just starting out, you'll be green at first.
     Your managers and more experienced engineers will choose what you work on.
     That's normal.
-    But if there's something else that's more important,
-    more pressing, that can make a big impact, push hard to *do that*.
+    But if you're assigned to one job,
+    and it seems like there's something else
+    that's more important, more pressing, that can make a big impact,
+    make the case for doing that work!
+    Advocate for it. Your manager will listen.
+
+    And if something takes literally a minute, an hour, even a day—your
+    project's first assertion, its first unit test, its first continuous integration server—maybe
+    just do it. And spread the word.
 
     What you did earlier,
     when I said you could go back in time and take a week to prevent this,
     the mental work you were doing, weighing the options, knowing what's at stake—
-    that *is* your job.
-    In industry, in academia, wherever you end up,
-    working on the most important thing you can do is magic.
+    *that is your job.*
+    In industry, in life, wherever you end up,
+    working on the most important thing you can is magic.
     Managers, coworkers, executives, the whole world will stand on its head
     if you know how to do that.
     Rightly so.
