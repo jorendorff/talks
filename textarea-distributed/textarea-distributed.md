@@ -243,7 +243,7 @@ And that's all I had to do.
 The code for this is actually extremely similar to Clobberation.
 
 This seems to work a lot better than Clobberation.
-I didn't have my any of my work just *vanish*.
+I didn't have any of my work just *vanish*.
 But take a look at the screen.
 Is this the same text you've got on your screen?
 
