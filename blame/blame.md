@@ -1,8 +1,8 @@
-# Don't blame the decaf: What really causes software failures (and successes)
+# Blame: In search of the root causes of software failure (and success)
 
 *This is a talk I gave for a class at Vanderbilt
 and another class at Nashville Software School
-in December 2017.
+in December 2017. Also PyTennessee 2019.
 No slides for this one, just a big whiteboard.
 —@jorendorff*
 
@@ -20,7 +20,7 @@ to six patients (that we know of).
 The overdoses caused burns and radiation poisoning.
 Three of the patients died.
 *(write on board, all the way to the right: "3 patients lost")*
-These accidents remain the worst in the history of radiation medicine.
+These accidents were the worst in the history of radiation medicine.
 
 This talk is in two parts.
 The first half is about this medical device and why it malfunctioned.

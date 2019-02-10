@@ -2,11 +2,11 @@ Some talks I've given. Mostly on programming.
 
 In this repository:
 
-*   [Don't blame the decaf: What really causes software failures (and successes)](blame/blame.md)
+*   [Blame: In search of the root causes of software failure (and success)](blame/blame.md)
 
     > The overdoses caused burns and radiation poisoning.
     > Three of the patients died.
-    > These accidents remain the worst in the history of radiation medicine.
+    > These accidents were the worst in the history of radiation medicine.
     >
     > This talk is in two parts.
     > The first half is about this medical device and why it malfunctioned.
