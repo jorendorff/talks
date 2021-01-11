@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Building on an unsafe foundation</title>
+  <link href="https://fonts.googleapis.com/css?family=Sorts+Mill+Goudy:400,400italic" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    body {
+        font-family: Sorts Mill Goudy, serif;
+        color: #666; background-color: #fdfbfb;
+        margin: 0;
+    }
+    body, th, td { font-size: 15pt; }
+
+    div.body, div.head {
+        margin-left: auto; margin-right: auto; max-width: 46em;
+    }
+    div.inbody, div.inhead {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+    div.outhead {
+        background-image: url(leaves.jpg);
+        background-size: 100%;
+    }
+    hgroup {
+        margin-left: -16em;
+        padding-left: 16em;
+        padding-top: 8em;
+    }
+    hgroup h1, hgroup h2 {
+        color: #fdfbfb;
+        opacity: 1.0;
+        text-shadow: rgba(0, 0, 0, 0.3) 3px 2px;
+    }
+    hgroup h1 { font-size: 210%; }
+    hgroup h2 { font-size: 170%; }
+    hgroup h2 code { font-size: 90%; }
+
+    h1, h2, h3, h4, h5, h6 { color: black; opacity: 0.75; font-style: italic; font-weight: normal; }
+    div.by { font-style: italic; text-align: right; }
+    p { line-height: 1.4em; }
+    pre { margin-left: 2.5em; }
+    kbd { font-weight: bold; }
+    span.error { color: #c00; }
+    a:link { color: #446077; }
+    a:visited { color: #3c5066; }
+    a:link.sublim { text-decoration: none; }
+    a:hover.sublim { text-decoration: underline; }
+
+    section { margin-top: 2.5em; }
+    hr { opacity: 0.6; margin-top: 2.5em; }
+    div.footer { font-style: italic; }
+  </style>
+</head>
+<body>
+
+<div class="outhead">
+  <div class="head">
+    <div class="inhead">
+      <hgroup>
+        <h1>Building on an unsafe foundation:</h1>
+        <h2>What <code>unsafe</code> means in Rust, and how to deal with that</h2>
+        <h2>Jason Orendorff, Rust Belt Rust, October 27, 2017</h2>
+      </hgroup>
+    </div>
+  </div>
+</div>
+
+<div class="body">
+<div class="inbody">
+
+<p>The NFL has a problem. It’s very serious.
+  <a href="https://jamanetwork.com/journals/jama/article-abstract/2645104">In
+  a July 2017 study</a>, researchers examined the brains of 111 former
+  NFL players, and found evidence of brain damage in 110 of them. I
+  should emphasize that the sample wasn’t random; these were brains of
+  deceased players, donated by their families. But still. If I had to
+  guess, based on the NFL’s actions on this issue, I would guess that
+  they don’t think better equipment or different schedules or rules changes
+  are going to make this go away. They’re acting like they don’t think
+  anything will help. And they may be right.</p>
+
+<p>So now what? As a longtime NFL fan, I always knew a career in the NFL
+  was risky. It’s hard on the body, and injuries happen all the time.
+  This is different. Now that medical technology and brain science have
+  caught up, now that we’re seeing the consequences, it’s beginning to
+  look like a career in the NFL is just a bad idea, if you value your
+  brain. Being forty and having kids may also be a factor my view on
+  this. I don’t want people in the prime of life burning up their
+  brains for my entertainment.</p>
+
+<p>Anyway, I’m not sure why you brought up the NFL;
+  this article is about programming.
+  So enough about serious dangers being ignored.</p>
+
+<p>Let’s talk about C++.</p>
+
+
+<section>
+  <h1>Part One — Unsafe C++: This is fine</h1>
+
+  <p>Maybe you’ve used C or C++ professionally. If not, there is a
+    whole kind of programming you’re probably not familiar with:
+    <em>systems programming,</em> programming where every byte and
+    every microsecond counts.</p>
+
+  <p>And let me tell you. Systems programmers <em>have seen some
+    things.</em>  They know how the sausage gets made. They know that
+    all software is built on top of a giant pile of sausages, and that
+    knowledge haunts them.</p>
+
+  <p>Let me try to convey just a little bit of what C++ has done to
+    these poor people.</p>
+
+  <p>C++ is a statically typed language, which means the compiler
+    catches all kinds of simple mistakes, like if you misspell a method
+    name. But there are still a few ways that a C++ program can go
+    wrong at run time. For example, if you declare a variable, let’s
+    say a nice integer:</p>
+
+  <pre>int count;</pre>
+
+  <p>and then you print the value of that integer,
+    which for some reason in C++ looks like this:</p>
+
+  <pre>cout &lt;&lt; count &lt;&lt; endl;</pre>
+
+  <p>This is terrible. A calamity. You forgot to initialize the
+    variable. Now if you’ve never used C++, right now you are
+    thinking, <i>oh no, C++ will throw an exception here, that’s very
+    sad</i>. Or maybe it will print zero. Or maybe it will print some
+    random number, because it’s printing the value of an int that we
+    never assigned to.</p>
+
+  <p>Well... it might!  C++ might do any of these things, or all of
+    them, because this is what’s called undefined behavior. And when a
+    C++ program triggers undefined behavior, the C++ language Standard
+    says that it may do literally anything.</p>
+
+  <p>In practice what that means is, the compiler generates some machine
+    code for this, and it just assumes that you would never do anything
+    so stupid as to forget to initialize a variable. (The compiler
+    thinks very highly of you.)</p>
+
+  <p>So what happens when you do forget?  Well, whatever. The compiler
+    writers don’t care. That machine code just runs, and it does
+    whatever.</p>
+
+  <p>What could possibly go wrong? We’ll see later. First let me show a
+    couple more examples of the kind of C++ code that can trigger
+    undefined behavior, because uninitialized variables are not the only
+    way. Say you have a variable.</p>
+
+  <pre>int count = 0;</pre>
+
+  <p>I remembered to initialize it this time! But now I’m about to do
+    something stupid. I’m going to add up some numbers.</p>
+
+<pre>
+for (int num : numbers) {
+  count += num;
+}
+</pre>
+
+  <p>This works fine, unless the total gets too big to fit in an <code>int</code>.
+    Then, guess what?  Undefined behavior.</p>
+
+  <p>Well, you know, math is tough. Say we just want to do something
+    nice and simple, like pass an argument to a function.</p>
+
+<pre>
+string hello_str = "hello&gt;";
+
+set_prompt(hello_str);
+</pre>
+
+  <p>This... looks fine. Yeah, this code is probably fine. I mean,
+    that code where we were adding up some integers, that was nuts, but
+    this?  This is safe.</p>
+
+  <p><em>...unless</em> the function takes that <code>string</code> by
+    reference. Then it might store a reference to the string somewhere,
+    and it might expect the string to still be there later, like when it
+    needs to print a prompt. In a language with garbage collection, that
+    would be fine, but in C++, once that variable goes out of scope, the
+    string is really truly gone. So what happens later when we try to
+    print the prompt?  Undefined behavior.</p>
+
+  <p>This example is tricky, because whose bug is this?  It’s my
+    bug. I’m calling the function incorrectly. But where is the
+    information I would need to understand that this is wrong?  It’s in
+    the documentation, which I skimmed.</p>
+
+  <p>You may say I’m a skimmer... but I’m not the only one.</p>
+
+  <p>So if you want to avoid undefined behavior in C++,
+    just be sure not to add integers, pass values to functions,
+    or use variables in any way.</p>
+
+  <img src="???">
+  
+  <p>There are a few other ways to get undefined behavior.
+    And I’m just going to go through these quickly,
+    because life is short...</p>
+
+<pre>
+int x;  f(x);  // uninitialized data
+count += num;  // signed int overflow
+set_prompt(hello_str);  // possible dangling reference
+delete ptr; delete ptr;  // double free, etc.
+ptr->method();  // use after free
+return &amp;variable;  // dangling ptr
+f(this);  // always a raw ptr
+pass_around(bottles_of_beer[100]);  // out of bounds
+obj1 = obj2;  // many pitfalls
+int i = pow(2, 39);  // float-to-int overflow
+Shape& ref = *shape;  // possible null reference
+for (auto v: vec) {
+  if (v)
+    vec.push_back(v/2); // iterator invalidation
+}
+do_work(); do_cleanup();  // watch out for exceptions
+#include &lt;thread&gt;  // abandon all hope ye who enter here
+</pre>
+
+  <p>Just to hit a couple highlights:</p>
+
+  <ul>
+
+    <li><p>Sometimes people claim that smart pointers make C++ safe, like
+        “Solved!”  I don’t really understand this impulse. They certainly
+        help. But <code>this</code> is always a dumb pointer. So.</p></li>
+
+    <li><p>Out of bounds array accesses are undefined behavior in
+        C++.</p></li>
+
+    <li><p>Object assignment has to be implemented carefully, because of
+        pitfalls I won’t bother going into.</p></li>
+
+  </ul>
+
+  <p>Et cetera.</p>
+
+  <p>Threads and exceptions have their own pitfalls and actually those are
+    especially hard to get right.</p>
+
+  <p>So yes, some of these are mistakes that you could make in any
+    language. But reading off the end of an array in Java, or using a
+    variable you never initialized in Python, causes an exception. You
+    can’t miss it. Your program dies. You get a stack trace. It tells you
+    what line number your bug is on. The developer experience in C++ is a
+    little different. Your program just keeps on going. It might even
+    work beautifully, on your machine. Undefined behavior lurks.</p>
+
+  <p>Yeah, it’s great.</p>
+
+  <p>It is possible to write a correct program in C++. Each feature of
+    the language has rules for its use. You just have to keep these rules
+    in mind, and don’t make mistakes. Break one rule, and the
+    consequences are bounded only by the limits of what your process can
+    do.</p>
+
+  <p>So, don’t do undefined behavior, kids. It would be bad.</p>
+
+  <img GIF src="???"></img>
+
+  <p>But maybe you’re thinking, “I’m fuzzy on the whole good/bad
+    thing. What do you mean, ‘bad’?”</p>
+
+  <p>Well, it turns out to be unreasonably bad.
+    Here’s the deal. When your program has undefined behavior,</p>
+
+  <ul>
+    <li>
+      <p>Sometimes it crashes and dies. That’s the good case. It’s kind
+        of like an exception. You’ll notice it, and it’s pretty easy to
+        track down.</p>
+    </li>
+
+    <li>
+      <p>Sometimes some memory gets overwritten, or uninitialized memory
+        is treated as data, and your program keeps running. It’ll crash
+        later. Or behave funny. Maybe. It may never bite, in which case,
+        is it really a bug?</p>
+    </li>
+
+    <li>
+      <p>And then there’s the bad case. While a program with undefined
+        behavior is obviously unreliable, <em>it’s still a program.</em>
+        It’s still a sequence of CPU instructions. And unscrupulous
+        persons can study those instructions and figure out what your
+        program is going to do after it goes off the rails.</p>
+
+      <p>Programs with undefined behavior are very often predictable
+        enough to be exploitable. Attackers use undefined behavior to
+        take over servers and browsers in practice.</p>
+    </li>
+  </ul>
+
+  <p>Earthquakes, volcanoes, dogs and cats living together. Mass hysteria.</p>
+</section>
+
+<section>
+  <h1>Part Two — “Safety”</h1>
+
+  <p>This concludes our crash course in C++.</p>
+
+  <p>(See what I did there? “Crash course”? No?)</p>
+
+  <p>Why are we rehashing all this?  Well, we all know Rust is a safe
+    language; it says so right here on the label.</p>
+
+  <img src="the trifecta quote???">
+
+  <p>If you know nothing else about Rust, you know you’re being
+    protected from <em>something.</em>  From what, it’s not always clear.
+    Yourself, maybe.</p>
+
+  <p>It’s funny, in other contexts, it’s obvious what “safe” means.
+    Say you’re a kid hero and an old man tells you,
+    “It’s dangerous to go alone. Take this.”</p>
+
+  <img src="zelda???">
+
+  <p>You don’t need to ask what he means by “dangerous”. The fact that
+    he’s giving you a <em>sword</em> kind of answers that question.</p>
+
+  <img src="what dangers???">
+
+  <p>It’s the monsters.</p>
+
+  <p>But if someone tells you, hey, it’s dangerous out there, take this,
+    and hands you... moves and ownership and references and a borrow
+    checker, and error messages unlike anything you’ve seen before, you
+    might be perplexed.</p>
+
+  <p>Well, I’m here to clear up the mystery for you. Rust’s notion of
+    safety is best understood as a response to C++. It’s keeping you
+    safe from, above all, undefined behavior. And some other things.
+    But mostly, its the undefined behavior.</p>
+
+  <p>We’ve always known writing a bunch of C++ is risky. It’s
+    painstaking work; programmers make mistakes. But now that we’re a
+    couple decades into this Internet thing, now that we’re seeing the
+    consequences, it’s beginning to look like writing a bunch of C++ is
+    just a bad idea.</p>
+
+  <p>We want a language that is as fast as C++, but without the monsters.
+    Wouldn’t that be great?</p>
+
+  <p>Well, this is where the story gets a little complicated.</p>
+</section>
+
+<section>
+  <h1>Part Three — Unsafe Rust: Whaaaaaaat</h1>
+
+  <p>Let me explain what unsafe code is in Rust.</p>
+
+  <p><strong>Unsafe code is code where mistakes can lead to undefined
+    behavior.</strong>  In Rust, unsafe code is always marked with
+    the <code>unsafe</code> keyword.</p>
+
+  <p>Now this leads to a question—</p>
+
+  <img src="Yzma???">
+
+  <p>Why do we even have that lever?</p>
+
+  <p>In a language designed from scratch for reliability,
+    why on earth would you allow undefined behavior?</p>
+
+  <p>For that matter, why does C++ allow it?
+    Why is this a thing at all?
+    Crashing is bad, right?
+    So, like... <em>WELL??</em></p>
+
+  <p>This is something we have not done a good enough job of explaining,
+    I think, so let’s spend some time on it.
+    And let’s start by looking at a little source code.</p>
+
+<pre>
+impl&lt;T&gt; Vec&lt;T&gt; {
+    ...
+    pub fn push(&amp;mut self, value: T) {
+        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+        ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+    }
+    ...
+}
+</pre>
+
+  <p>This is the <code>push</code> method of Rust’s <code>Vec</code>
+    type. This of course is an example of a <em>safe</em>
+    method. Pushing a value onto a vector is a totally normal thing we
+    do all the time. And what you’re about to see is the real source
+    code from Rust’s standard library. So how does this work?</p>
+
+<pre>
+    pub fn push(&amp;mut self, value: T) {
+        if self.len == self.buf.cap() {
+            self.buf.double();
+        }
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+        ███████████████████████████████████████████████
+    }
+</pre>
+
+  <p>Well, first we check to make sure there is room in the vector for
+    another element. The way vectors work, there's a contiguous chunk of
+    memory called a buffer.  That's where the elements are stored; and
+    then there’s often some extra capacity left over in the buffer, some
+    extra unused memory, which can be used the next time you call
+    <code>.push()</code>.  On the other hand, if the buffer already full, we have
+    to call this <code>.double()</code> method to double the size. And
+    then,</p>
+
+<pre>
+    pub fn push(&amp;mut self, value: T) {
+        if self.len == self.buf.cap() {
+            self.buf.double();
+        }
+        unsafe {
+            let end = self.as_mut_ptr().offset(self.len as isize);
+            ptr::write(end, value);
+            self.len += 1;
+        }
+    }
+</pre>
+
+  <p><em>AAAUGH!</em> Unsafe code!  Raw pointers!  Pointer
+    arithmetic!  Writing to uninitialized memory!  And then to top it
+    off, we mess with the value of the private
+    field <code>self.len</code>, which is critical to the correctness of
+    unsafe code elsewhere.</p>
+
+  <p>Oh emm gee, y’all.</p>
+
+  <p>How can this code be considered safe?</p>
+
+  <p>And is... Wait a minute. <em>Is this sort of thing going on
+      anywhere else in Rust’s standard library?</em></p>
+
+  <p>What do you think?</p>
+
+  <img src="scrolling grep output???">
+
+  <p>Yep.</p>
+
+  <p>Well, Rust is not alone. Think about it — what’s a safe
+    programming language?  Java? What language is the JVM written in?
+    It’s a quarter million lines of C++. Do you think the JVM’s
+    implementation of arrays is safe and free of pointer arithmetic?
+    Python?  Half a million lines of C.
+    Ruby? Same deal; here’s the
+    <a href="https://ruby-doc.org/core-2.2.0/Array.html#method-i-3C-3C"><code>Array#push</code> method</a>,
+    written in C.</p>
+
+  <p>Well, what about a language designed by smart people?
+    What about Haskell?  Well, Haskell is special—Haskell has a runtime system,
+    but it’s actually written in Haskell, right?</p>
+
+  <p>Lol, no. It’s 80,000 lines of C.</p>
+
+  <p>Underpinning every safe programming language, library, or virtual machine
+    is a whole lot of unsafe code.</p>
+
+  <p>And that’s not even all of it.
+    Because no matter what language we use,
+    all of our programs run on some operating system,
+    Linux, Windows, Mac OS, all written in C.
+    Filesystems, network drivers, all C.</p>
+
+  <p>When we imagine safe languages as cozy and secure from the ground
+    up, we are pretending all this support code isn’t there. It’s a bit of
+    a fairy tale.</p>
+
+  <img src="castle???">
+
+  <p>The reality is more like Saruman’s tower, in Lord of the Rings.</p>
+
+  <img src="orthanc???">
+
+  <p>You look at the actual tower, and you think, OK, this is nice.
+    It’s clearly designed to be pretty robust. But the basement is a
+    maze of goblin warrens. Building code violations all over the
+    place. It’s a mess.</p>
+
+  <p>This is where we’re at in software today, even in safe
+    languages. Even in Rust.</p>
+
+  <p>Why is it like this?
+    Why is there unsafe code under every rock?
+    And that being the case, how safe are we, really?
+    Is there any point in adopting a so-called safe language?</p>
+
+  <p>Should we all give up and become goatherds?
+    That’s the real question.</p>
+
+  <p>And if we decide to stick it out: how do we engineer safety in unsafe code?</p>
+</section>
+
+<section>
+  <h1>Part Four — Unsafe Rust: Why</h1>
+
+  <p>So that’s kind of a lot of questions.
+    To start, let me try to explain why we have that lever.</p>
+
+  <p>There are two basic reasons Rust allows unsafe code.</p>
+
+  <ol>
+
+    <li>
+      <p>Sometimes the safest thing is too slow.
+        Sometimes the safest thing is just to check everything at run time,
+        to repeat a bound check,
+        to repeat a lookup to make sure the value is still there;
+        and the end of that road is Python performance.</p>
+
+      <p>Sometimes in a Rust program, you the programmer are quite sure
+        the value is still there or whatever, and in those cases,
+        sometimes you can just write a little unsafe code and then it’s
+        fast.</p>
+    </li>
+
+    <li>
+      <p>Sometimes we need to break Rust’s safety assumptions.</p>
+
+      <p>I said earlier that Rust is designed to prevent undefined
+        behavior. Those little arguments you get into with the borrow
+        checker?  That’s because Rust wants proof your program isn’t
+        going to trigger undefined behavior. The type system, moves,
+        borrows, lifetimes—all of that is part of this proof Rust is
+        building.</p>
+
+      <p>But that system, and all those rules, it’s kind of designed for
+        normal code, not super weird code. And some things your program
+        needs to do can’t be done in safe Rust, because they don’t fit
+        in with Rust’s safety proof system. They break some of the
+        system’s assumptions.</p>
+
+      <p>What assumptions? I can think of two big ones.</p>
+
+      <ul>
+
+        <li>
+          <p>All code is Rust.</p>
+
+          <p>Rust can prove safety right up to the edges of all the Rust
+            code in your program, but approximately all programs use
+            some non-Rust code. The C standard library is a ton of C
+            code, and it’s loaded into almost every Rust program at
+            startup.</p>
+
+          <p>So from Rust’s perspective, these calls into C code, well,
+            Rust can prove that the arguments you’re passing are the
+            right types, but if you’ve ever used C, you know that’s not
+            the whole story. C functions have pointer arguments. Is it
+            safe to pass a null pointer?  It depends on the
+            function. Sometimes it is and sometimes it isn’t. Rust
+            doesn’t know. Does the function save the pointer and try to
+            use it later? Rust doesn’t know. Is the function itself
+            correct, or is it buggy and crashy?  Welllll...</p>
+
+          <p>Calling into non-Rust code is beyond the reach of Rust’s
+            built-in proof technology. But we still want to allow
+            it. Hence, the <code>unsafe</code> keyword in Rust.</p>
+        </li>
+
+        <li>
+          <p>Uninitialized memory doesn’t exist.</p>
+
+          <p>Again, this is “true enough” for most Rust code.</p>
+
+          <p>If you have a variable, Rust only lets you use it if it’s
+            initialized.</p>
+
+          <p>If you have a struct, all the fields are initialized.</p>
+
+          <p>If you have a reference, the value it refers to is always
+            fully initialized.</p>
+
+          <p>And so on. In normal code, this assumption is fine. There
+            are two kinds of memory in a process, memory that’s in use,
+            and has data in it; and memory that’s uninitialized, and has
+            garbage bits in it. Making sure we’re only using the first
+            kind is a really nice feature of Rust, a big step up from
+            C++, and an important part of the safety proof.</p>
+
+          <p>But of course it means you can’t write Rust code
+            that’s <em>about</em> uninitialized memory. Remember the
+            <code>Vec::push</code> method we were looking at earlier?  It’s
+            fundamentally about the vector having some extra memory
+            ready to store the next value. The subject matter of that
+            function is fundamentally at odds with Rust’s safety
+            system.</p>
+
+          <p>I think this actually gets a lot of C++ programmers into
+            trouble immediately when they pick up Rust. The very first
+            thing I tried to do in Rust was make a doubly linked list. I
+            wanted to kick the tires a bit, and that was just the first
+            thing that came to mind. And this is actually a fine use for
+            Rust, but it's basically all memory management, and
+            therefore not the best fit for <em>safe</em> Rust. Not the
+            best introduction to the language.</p>
+
+          <p>Code that does memory management is beyond the reach of
+            Rust’s proof technology. But we still want to write that
+            code in Rust. Hence, <code>unsafe</code> Rust.</p>
+        </li>
+      </ul>
+
+      <p>Now if you look at these assumptions, you can see there’s a
+        sort of comfort zone, where you’re writing normal Rust code and
+        these are true, and the safety proof goes through just fine.</p>
+
+      <p>Unsafe code is a gap in the proof. It’s a place where we’re
+        saying, look, I gotta write code that crosses these lines. And
+        I understand that undefined behavior can happen, if I screw
+        up.</p>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h1>Part Five — Unsafe Rust: How</h1>
+
+  <p>That “I understand” statement is a big part of what unsafe code is about.</p>
+
+  <p>When we see an <code>unsafe</code> block in Rust code,
+    what it oughta say is, “TRUST ME”.</p>
+
+<pre>
+pub fn push(&mut self, value: T) {
+    if self.len == self.buf.cap() {
+        self.buf.double();
+    }
+    TRUST ME {
+        let end = self.as_mut_ptr().offset(self.len as isize);
+        ptr::write(end, value);
+        self.len += 1;
+    }
+}
+</pre>
+
+  <p>That’s what we mean, right?</p>
+
+  <p>What we’re saying is, this pointer arithmetic here?  This pointer
+    write?  I’ve thought it through, and this code is correct. Trust
+    me.</p>
+
+  <p>Now I know what you’re thinking.
+    <i>I don’t trust this guy.</i></p>
+
+  <p>Which is probably smart...
+    maybe a little hurtful...
+    but the fact that we’re even talking about it is probably a good thing.
+    I’ve been doing C++ for years, I <em>never</em> had to type “trust me”!
+    “Yeah, I’m gonna XOR these two pointers together.”
+    The compiler just trusted me!
+    My peers trusted me!
+    I’m telling you, it’s bonkers!</p>
+
+  <p>Rust isn’t quite so trusting; in normal code it checks your work.
+    Even in an <code>unsafe</code> block, types still exist, lifetimes still exist,
+    the rules of the language still apply.
+    The only thing this <code>TRUST ME</code> unlocks
+    is the ability to call unsafe methods, and dereference raw pointers.</p>
+
+  <p>So now you know <a href="???">how to shoot yourself in the foot</a> in Rust:
+    Unsafe you shoot yourself in the foot.</p>
+
+  <p>The rest of this article is about how <em>not</em> to shoot
+    yourself in the foot. The techniques are all classics, and I hope
+    you’ve heard of them all before. If not, today is a good day for
+    you!</p>
+
+  <p>The first thing to keep in mind is,</p>
+
+  <ul>
+    <li>
+      <p><strong>Don’t.</strong></p>
+
+      <p>Obviously, don’t do it.
+        I mean, you probably don’t need to be reminded, but for completeness...</p>
+
+      <p>The nice thing about unsafe Rust is, you also get a
+        whole <em>safe</em> language, free of charge!  So, maybe
+        consider using that.</p>
+    </li>
+
+    <li>
+      <p><strong>Contracts.</strong></p>
+
+      <p>This is an old idea, by software engineering standards;
+        it predates object-oriented programming. A contract is just the set of rules for
+        how you’re supposed to call a function. Because that’s kind of
+        the building block of this safety proof I keep talking
+        about.</p>
+
+      <p>Every unsafe operation <em>can</em> be used correctly.
+        As long as you follow the contract, then the unsafe method is in fact safe.</p>
+    </li>
+
+    <li>
+      <p><strong>Invariants</strong>.</p>
+
+      <p>Invariants are the best idea in object-oriented programming;
+        very useful when you’ve got unsafe code.  They’re conditions
+        that should always be true for a given type of value.</p>
+
+      <p>This is what makes that pointer arithmetic in
+        the <code>Vec</code> example safe. There’s an invariant
+        in <code>Vec</code> that the <code>.len</code> field is always
+        less than or equal to the capacity. There’s another invariant
+        that every element of the buffer up to the <code>len</code> is
+        fully initialized. Without those invariants, the unsafe code
+        in <code>.push()</code> would not be safe. And all code that has
+        access to the <code>.len</code> field has to take care that the
+        invariant stays true.</p>
+    </li>
+
+    <li>
+      <p><strong>Making invalid values impossible.</strong></p>
+
+      <p>This one comes from those smug functional languages,
+        the Haskells and MLs of the world.</p>
+
+      <p>The idea is, when your language has a good type system, you can
+        use it to rule out things like null references, dangling
+        pointers, and bad values generally.</p>
+
+      <p>Rust is good for this because the type system has features that
+        are good for making the kind of guarantee we care about in
+        low-level programming, as well as application programming.  It
+        can express ideas like, this string is only good for this one
+        function call; or, this field is optional.</p>
+    </li>
+  </ul>
+  
+  <p>The common thread here is simply:
+    do the things you need to do in order to reason about your code.
+    I said that unsafe code is a gap in the safety proof.
+    You’re filling the gap.
+    Write your code to convince yourself that it’s safe after all,
+    even though Rust can’t fully verify that.
+    All these techniques are about building that safety proof in your head,
+    and making as much of that proof as possible live inside your code.</p>
+
+  <p>Now, of these four ideas, contracts, I think, could bear a little more explanation.
+    So let’s talk about contracts.</p>
+
+  <p>In Rust, when I started out,
+    it wasn’t obvious sometimes if I should mark a function <code>unsafe</code> or not.
+    The language lets you choose, which is a little surprising.
+    You can either declare the whole function unsafe,
+    basically flag this method as being unsafe to call:</p>
+
+  ???
+  
+  <p>or you can say, “trust me”:</p>
+
+  ???
+
+  <p>and the difference is, if you do this, your function is considered safe.
+    <code>unsafe</code> is not in the method signature,
+    so the caller receives no warning that you’ve got this unsafe code in here.</p>
+
+  <p>Which is right, and why?
+    And how important is it to get this right?</p>
+
+  <p>I started out thinking, well, if this code does dangerous things,
+    then obviously calling it is going to be dangerous. So, option 1.
+    In this view, unsafety is kind of this spreading contagion that
+    can’t be stopped and infects your whole program. It’s an
+    all-or-nothing view of risk that’s pretty typical for beginners.</p>
+
+  <p>But option 2 is what actually appears in the standard library.
+    What I think now is, option 2 here is kind of what Rust is all
+    about. Rust is a toolkit for making dangerous stuff safe, without
+    compromising performance.</p>
+
+  <p>Wrapping carefully-written unsafe code in a safe API
+    is the underappreciated cornerstone of Rust.</p>
+
+  <p>The <em>right</em> way to decide when a method should be declared safe is
+    to understand its contract.</p>
+
+  <p>It’s really simple. Every function has a contract, a set of rules
+    for correct use. Not just in Rust and C++, all languages are like
+    this: when you call a function, you have to pass a certain number of
+    arguments, of particular types, if you want the function to work
+    right.</p>
+
+  <p>And then if you misuse the function, then what?  Well, best case,
+    like with this <code>push</code> method, there are no invalid
+    arguments, because the type system completely captures what
+    arguments are acceptable here. It’s part of the type signature.
+    The compiler enforces that, and in theory nothing else should go
+    wrong here.</p>
+
+  <p>With other functions, in addition to the types,
+    there are other rules, too.
+    The arguments have to be <em>valid</em> in some sense.
+    And the function has to check the arguments to make sure they’re valid.
+    Take Rust’s <code>String::insert()</code> method:
+    if you pass an index that’s off the end of the string,
+    it’ll panic.
+    It doesn’t say that in the type signature.
+    It says it in the documentation, and there’s code for it.</p>
+
+  <p>Usually some combination of types and runtime checks is sufficient.
+    But if not—if misusing a function could lead to undefined behavior—well,
+    <em>then</em> it needs to be marked unsafe.</p>
+
+  <p><code>unsafe</code> means two problems:
+    First, the contract is more detailed than the type system can handle,
+    so if you want to use it safely, you actually have to read the documentation.
+    Second, if you do break the contract, <em>that would be bad.</em></p>
+
+  <p>That’s the case for functions like <code>ptr::write</code>.</p>
+  
+  <img src="ptr::write docs???">
+
+  <p>And sure enough, the documentation has five paragraphs of stuff you
+    need to read if you want to use this function without crashing. The
+    fine print of the contract. It talks about unobvious things like
+    pointer alignment.</p>
+
+  <img src="Vec::push docs???">
+
+  <p>The <code>push</code> method doesn’t have any fine print about
+    safety. It can <em>panic,</em> in one bizarro case that happens
+    with zero-size structs. But panic is safe; the behavior of panic is
+    well-defined. There are no safety rules in this contract, therefore
+    this is a safe method.</p>
+
+  <p>However, that leaves the implementers, then, with the task of
+    building a safe method from unsafe parts!  It can be done.</p>
+
+  <img src="'Build safe code from unsafe parts', showing the Vec::push code one more time???">
+
+  <p>You need to carefully follow the contracts for those unsafe parts
+    Check the data flowing into unsafe code.
+    Or use invariants to make it impossible for the data to be wrong.
+    Make it impossible for your caller to break that contract.
+    Take responsibility yourself for enforcing it.</p>
+
+  <p>For example, <code>ptr::write</code> requires this pointer
+    to be a valid, aligned pointer to memory no one else is using,
+    practically speaking, it must be within the vector’s buffer.
+    How do we make sure that is true?
+    All the parts of the method are working together to that end.</p>
+</section>
+
+<section>
+  <h1>Conclusion</h1>
+
+  <p>So what have we learned?</p>
+
+  <p>We learned what kind of C++ code can cause undefined behavior, and
+    what that means, in theory and in practice. We learned what “safe”
+    means in Rust, why unsafe code is allowed, and a few key ideas for
+    writing unsafe code responsibly.</p>
+
+  <p>So what?</p>
+
+  <p>I’ve noticed that sometimes, in some fields, engineers get the idea
+    in their heads that they can engineer a safer future. It has happened
+    in fields like: medical equipment, airplanes, the space
+    program. Industrial machines used to be incredibly dangerous.
+    Highways. When that’s the case, we do safety engineering. We study
+    failures. We seek to understand them. We design tools that rule out
+    those failures.</p>
+
+  <p>Well? What about software?</p>
+
+  <p>Is it safe enough today?  Can we engineer a safer future, or do we
+    think nothing will help?</p>
+
+  <p>That’s for you to decide.</p>
+
+  <p>I think we can build a safer future. So if you take one thing from
+    this talk, I hope it’s an understanding—at a technical level—of how Rust
+    fits into that effort. Sure, Rust prevents some bugs outright, but it’s
+    more than that.</p>
+
+  <ul>
+
+    <li><p>It also helps you understand what the safety rules are that
+        good C++ hackers have been accumulating in their heads, one by
+        one, the hard way, for decades.</p></li>
+
+    <li><p>It also helps you put unsafe code behind a safe API and have
+        reason to believe it is actually solid. That is a safety
+        engineering tool.</p></li>
+
+    <li><p>It also has an expressive type system and ownership system, so
+        you can write more contracts in the language itself, enforced by the
+        compiler, instead of writing unsafe methods with long comments
+        explaining how to use them. That is a safety engineering tool.</p></li>
+
+    <li><p>Maybe most important, it’s economically viable. So you can
+        actually choose it and use it. Rust can be your competitive
+        advantage.</p></li>
+
+  </ul>
+
+  <p>Unsafe code isn’t going away. If you’re a systems programmer, and
+    your job involves writing unsafe code, or consuming unsafe APIs, you
+    should be using Rust. It’s the right tool for the job. It’s ready
+    today. Let’s do it.</p>
+</section>
+
+<hr />
+
+<div class="footer">
+  <p>Jason Orendorff is the co-author of
+    <a href="https://www.amazon.com/Programming-Rust-Fast-Systems-Development/dp/1491927283/"
+       ><em>Programming Rust</em></a>, with Jim Blandy. This article is a talk Jason gave
+    at <a href="http://www.rust-belt-rust.com/">Rust Belt Rust</a> 2017.
+    A lot of the material here is drawn from Chapter 21 of the book,
+    which also includes worked examples and more.</p>
+</div>
+
+</div>
+</div>
+</body>
+</html>
+
+
+## TODO
+
+* [ ] Circle back to the scrolling grep thing later, say explicitly what’s unsafe in libstd.
+
+Two suggestions from folks who saw the talk the first time:
+
+* [ ] Point out that the "unsafe" part is not the only scary part.
+
+* [ ] Mention use of private fields to crack down on invalid values.
+
+
+
+
+
