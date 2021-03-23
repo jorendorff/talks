@@ -1,0 +1,4 @@
+#!/usr/bin/osascript
+
+tell application "Preview" to open "/Users/jorendorff/Downloads/alloy-language-reference.pdf"
+activate application "Preview"
