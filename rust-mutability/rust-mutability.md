@@ -305,5 +305,7 @@ as long as there are no other references to observe the change.
 
 *   Functional programming languages mostly help by eliminating mutable state.
 
+*   Greedy algorithms "help" by refusing to share.
+
 *   In Rust, you choose between "shared" and "mutable".
 
